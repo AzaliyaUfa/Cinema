@@ -1,0 +1,122 @@
+import java.util.Scanner;
+class Cinema {
+    public static void main(String[] args) {
+        CinemaMethods cinema = new CinemaMethods();
+        cinema.createArray();
+        while (!cinema.exit) {
+            cinema.menu();
+        }
+    }
+}
+
+class CinemaMethods {
+    int rows;
+    int seats;
+    int row;
+    int seat;
+    char[][] twoDimArray;
+    boolean exit = false;
+    int purchasedTic = 0;
+    int currIncome = 0;
+
+    public void menu() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("1. Show the seats");
+        System.out.println("2. Buy a ticket");
+        System.out.println("3. Statistics");
+        System.out.println("0. Exit");
+        int choice  = sc.nextInt();
+        switch (choice) {
+            case 1:
+                this.printHall();
+                break;
+            case 2:
+                this.buy();
+                break;
+            case 3:
+                this.statistics();
+                break;
+            case 0:
+                this.exit = true;
+        }
+    }
+
+    public void createArray() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the number of rows:");
+        this.rows = sc.nextInt();
+        System.out.println("Enter the number of seats in each row:");
+        this.seats = sc.nextInt();
+        System.out.println();
+        this.twoDimArray  = new char[this.rows + 1][this.seats + 1];
+        this.twoDimArray[0][0] = ' ';
+        for (int i = 1; i < this.rows + 1; i++) {
+            for (int j = 1; j < this.seats + 1; j++) {
+                this.twoDimArray[i][j] = 'S';
+                this.twoDimArray[0][j] = (char) ('0' + j);
+                this.twoDimArray[i][0] = (char) ('0' + i);
+            }
+        }
+    }
+
+    public void printHall() {
+        System.out.println("Cinema:");
+        for (int i = 0; i < this.rows + 1; i++) {
+            for (int j = 0; j < this.seats + 1; j++) {
+                System.out.print(this.twoDimArray[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public void buy() {
+        this.choosingAPlace();
+        int tickets = this.rows * this.seats;
+        int price;
+        if (tickets <= 60) {
+            price = 10;
+        } else if (this.row <= this.rows / 2) {
+            price = 10;
+        } else {
+            price = 8;
+        }
+        System.out.println("Ticket price: $" + price);
+        System.out.println();
+        this.currIncome += price;
+        this.twoDimArray[this.row][this.seat] = 'B';
+        this.purchasedTic++;
+    }
+    public void choosingAPlace() {
+        Scanner sc = new Scanner(System.in);
+        boolean flag = true;
+        while (flag) {
+            System.out.println("Enter a row number:");
+            this.row = sc.nextInt();
+            System.out.println("Enter a seat number in that row:");
+            this.seat = sc.nextInt();
+            if (this.row > this.rows || this.seat > this.seats) {
+                System.out.println("Wrong input!");
+            } else if (this.twoDimArray[row][seat] == 'B') {
+                System.out.println("That ticket has already been purchased!");
+            } else {
+                flag = false;
+            }
+        }
+    }
+    public void statistics() {
+        int income;
+        int tickets = this.rows * this.seats;
+        if (tickets <= 60) {
+            income = tickets * 10;
+        } else {
+            income = 10 * this.seats * (this.rows / 2) + 8 * this.seats * (this.rows - this.rows / 2);
+        }
+        System.out.println("Number of purchased tickets: " + this.purchasedTic);
+        double percentage = (double) this.purchasedTic * 100 / tickets;
+        System.out.printf("Percentage: %.2f%c%n", percentage,'%');
+        System.out.println("Current income: $" + this.currIncome);
+        System.out.printf("Total income: $%d%n%n", income);
+    }
+
+}
